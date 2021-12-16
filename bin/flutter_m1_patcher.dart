@@ -56,4 +56,6 @@ void main(List<String> arguments) async {
       .copySync(
     '$flutterBinCachePath/artifacts/engine/darwin-x64/frontend_server.dart.snapshot',
   );
+
+  print('Done!');
 }
