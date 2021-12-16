@@ -1,3 +1,6 @@
+## 1.1.1
+- Lowered Dart dependency constraint
+
 ## 1.1.0
 - I learned how exposed executables work
 
