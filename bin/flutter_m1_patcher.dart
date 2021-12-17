@@ -2,8 +2,8 @@ import 'dart:io';
 
 void main(List<String> arguments) async {
   // Get the path to Flutter
-  final result = await Process.run('which', ['flutter']);
-  final flutterPath = result.stdout as String;
+  final whichFlutterResult = await Process.run('which', ['flutter']);
+  final flutterPath = whichFlutterResult.stdout as String;
 
   // Ask the user for confirmation
   stdout.write('Flutter found at $flutterPath');
@@ -15,16 +15,23 @@ void main(List<String> arguments) async {
   }
 
   // Get Flutter's Dart SDK vserion
-  final flutterBinCachePath = File(flutterPath.trim()).parent.path + '/cache';
+  final flutterBinPath = File(flutterPath.trim()).parent.path;
+  final flutterBinCachePath = flutterBinPath + '/cache';
   final dartSdkVersionFile = File('$flutterBinCachePath/dart-sdk/version');
   final dartSdkVersion = dartSdkVersionFile.readAsStringSync().trim();
+
+  // Print the original bundled Dart SDK version
+  print('Original bundled Dart SDK version:');
+  final dartVersionOldResult =
+      await Process.run('$flutterBinPath/dart', ['--version']);
+  stdout.write(dartVersionOldResult.stdout);
 
   // Delete the existing dart-sdk folder
   print('Deleting bundled Dart SDK...');
   Directory('$flutterBinCachePath/dart-sdk').deleteSync(recursive: true);
 
   // Download the Dart SDK
-  print('Downloading Dart SDK $dartSdkVersion for macOS arm64...');
+  print('Downloading Dart SDK $dartSdkVersion for macOS_arm64...');
   await Process.run(
     'curl',
     [
@@ -56,6 +63,12 @@ void main(List<String> arguments) async {
       .copySync(
     '$flutterBinCachePath/artifacts/engine/darwin-x64/frontend_server.dart.snapshot',
   );
+
+  // Print the new bundled Dart SDK version
+  print('New bundled Dart SDK version:');
+  final dartVersionNewResult =
+      await Process.run('$flutterBinPath/dart', ['--version']);
+  stdout.write(dartVersionNewResult.stdout);
 
   print('Done!');
 }
