@@ -5,20 +5,13 @@ void main(List<String> arguments) async {
   final whichFlutterResult = await Process.run('which', ['flutter']);
   final flutterPath = whichFlutterResult.stdout as String;
 
-  // Ask the user for confirmation
-  stdout.write('Flutter found at $flutterPath');
-  stdout.write('Continue? (y/n) ');
-  final confirmation = stdin.readLineSync();
-  if (confirmation != 'y') {
-    print('Aborting');
-    return;
-  }
-
   // Get Flutter's Dart SDK vserion
   final flutterBinPath = File(flutterPath.trim()).parent.path;
   final flutterBinCachePath = flutterBinPath + '/cache';
   final dartSdkVersionFile = File('$flutterBinCachePath/dart-sdk/version');
   final dartSdkVersion = dartSdkVersionFile.readAsStringSync().trim();
+
+  stdout.write('Flutter found at $flutterPath');
 
   // Print the original bundled Dart SDK version
   print('Original bundled Dart SDK version:');
@@ -26,12 +19,16 @@ void main(List<String> arguments) async {
       await Process.run('$flutterBinPath/dart', ['--version']);
   stdout.write(dartVersionOldResult.stdout);
 
-  // Delete the existing dart-sdk folder
-  print('Deleting bundled Dart SDK...');
-  Directory('$flutterBinCachePath/dart-sdk').deleteSync(recursive: true);
+  // Ask the user for confirmation
+  stdout.write('Continue? (y/n) ');
+  final confirmation = stdin.readLineSync();
+  if (confirmation != 'y') {
+    print('Aborting');
+    return;
+  }
 
   // Download the Dart SDK
-  print('Downloading Dart SDK $dartSdkVersion for macOS_arm64...');
+  print('Downloading Dart SDK $dartSdkVersion for macos_arm64...');
   await Process.run(
     'curl',
     [
@@ -40,6 +37,10 @@ void main(List<String> arguments) async {
       'https://storage.googleapis.com/dart-archive/channels/stable/release/$dartSdkVersion/sdk/dartsdk-macos-arm64-release.zip'
     ],
   );
+
+  // Delete the existing dart-sdk folder
+  print('Deleting bundled Dart SDK...');
+  Directory('$flutterBinCachePath/dart-sdk').deleteSync(recursive: true);
 
   // Unzip the Dart SDK
   print('Unzipping Dart SDK...');

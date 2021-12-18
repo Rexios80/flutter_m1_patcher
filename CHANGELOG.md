@@ -1,3 +1,7 @@
+## 1.3.0
+- Reordered installation steps to prevent issues
+- Updated readme
+
 ## 1.2.0
 - Updated readme to indicate that Dart must be installed from homebrew first
 - Print the original and new Dart SDK versions to the console
