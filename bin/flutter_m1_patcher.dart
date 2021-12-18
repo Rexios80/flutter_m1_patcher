@@ -100,4 +100,6 @@ void main(List<String> arguments) async {
   stdout.write(dartVersionNewResult.stdout);
 
   print('Done!');
+
+  exit(0);
 }
