@@ -1,15 +1,27 @@
 import 'dart:io';
 
 void main(List<String> arguments) async {
-  // Get the path to Flutter
+  // Get the path to Flutter and Dart
   final whichFlutterResult = await Process.run('which', ['flutter']);
+  final whichDartResult = await Process.run('which', ['dart']);
   final flutterPath = whichFlutterResult.stdout as String;
+  final dartPath = whichDartResult.stdout as String;
 
-  // Get Flutter's Dart SDK vserion
+  // Get Flutter's bundled Dart SDK vserion
   final flutterBinPath = File(flutterPath.trim()).parent.path;
   final flutterBinCachePath = flutterBinPath + '/cache';
   final dartSdkVersionFile = File('$flutterBinCachePath/dart-sdk/version');
   final dartSdkVersion = dartSdkVersionFile.readAsStringSync().trim();
+
+  // Exit if Flutter and Dart are in the same location
+  // This means the user is running the script with the bundled Dart SDK
+  if (dartPath.contains(flutterBinPath)) {
+    print(
+      'This script is running with Flutter\'s bundled Dart SDK.'
+      ' Install Dart with homebrew first.',
+    );
+    exit(0);
+  }
 
   stdout.write('Flutter found at $flutterPath');
 
@@ -24,19 +36,35 @@ void main(List<String> arguments) async {
   final confirmation = stdin.readLineSync();
   if (confirmation != 'y') {
     print('Aborting');
-    return;
+    exit(0);
+  }
+
+  // Determine the release channel of the bundled Dart SDK
+  final String releaseChannel;
+  if (dartSdkVersion.contains('beta')) {
+    releaseChannel = 'beta';
+  } else if (dartSdkVersion.contains('dev')) {
+    releaseChannel = 'dev';
+  } else {
+    releaseChannel = 'stable';
   }
 
   // Download the Dart SDK
   print('Downloading Dart SDK $dartSdkVersion for macos_arm64...');
-  await Process.run(
-    'curl',
-    [
-      '-o',
-      '$flutterBinCachePath/dart-sdk.zip',
-      'https://storage.googleapis.com/dart-archive/channels/stable/release/$dartSdkVersion/sdk/dartsdk-macos-arm64-release.zip'
-    ],
+  final request = await HttpClient().getUrl(
+    Uri.parse(
+      'https://storage.googleapis.com/dart-archive/channels/$releaseChannel/release/$dartSdkVersion/sdk/dartsdk-macos-arm64-release.zip',
+    ),
   );
+  final response = await request.close();
+  if (response.statusCode != 200) {
+    print(
+      'Failed to download Dart SDK.'
+      ' This might mean Flutter is using a Dart SDK version that is not available on the Dart website.',
+    );
+    exit(0);
+  }
+  await response.pipe(File('$flutterBinCachePath/dart-sdk.zip').openWrite());
 
   // Delete the existing dart-sdk folder
   print('Deleting bundled Dart SDK...');

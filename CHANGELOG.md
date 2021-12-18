@@ -1,3 +1,8 @@
+## 1.4.0
+- Don't execute if the script is running with Flutter's bundled Dart SDK
+- Support all Dart release channels
+- Fail gracefully if the Dart SDK download fails
+
 ## 1.3.0
 - Reordered installation steps to prevent issues
 - Updated readme

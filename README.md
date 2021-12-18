@@ -22,3 +22,5 @@ Run `flutterpatch` in a terminal
 
 ## Additional Information
 If things go bad, delete `flutter/bin/cache` and run `flutter doctor`. This will reset the bundled Dart SDK to the one shipped with Flutter.
+
+You will need to run `flutterpatch` after every `flutter upgrade`
