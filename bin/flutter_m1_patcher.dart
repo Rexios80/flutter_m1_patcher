@@ -22,12 +22,14 @@ void main(List<String> arguments) async {
   }
 
   // Get the path to Flutter
-  final String flutterPath;
+  final String flutterBinPath;
   if (args[optionFlutterPath] != null) {
-    flutterPath = args[optionFlutterPath];
+    final flutterRootPath = args[optionFlutterPath];
+    flutterBinPath = '$flutterRootPath/bin';
   } else {
     final whichFlutterResult = await Process.run('which', ['flutter']);
-    flutterPath = whichFlutterResult.stdout as String;
+    final flutterPath = whichFlutterResult.stdout as String;
+    flutterBinPath = File(flutterPath.trim()).parent.path;
   }
 
   // Get the path to Dart
@@ -35,7 +37,6 @@ void main(List<String> arguments) async {
   final dartPath = whichDartResult.stdout as String;
 
   // Get Flutter's bundled Dart SDK vserion
-  final flutterBinPath = File(flutterPath.trim()).parent.path;
   final flutterBinCachePath = flutterBinPath + '/cache';
   final dartSdkVersionFile = File('$flutterBinCachePath/dart-sdk/version');
   final dartSdkVersion = dartSdkVersionFile.readAsStringSync().trim();
@@ -50,7 +51,7 @@ void main(List<String> arguments) async {
     exit(1);
   }
 
-  stdout.write('Flutter found at $flutterPath');
+  print('Flutter found at $flutterBinPath/flutter');
 
   // Print the original bundled Dart SDK version
   print('Original bundled Dart SDK version:');
