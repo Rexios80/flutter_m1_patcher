@@ -20,6 +20,8 @@ $ dart pub global activate flutter_m1_patcher
 ### Usage
 Run `flutterpatch` in a terminal
 
+Run with `-p` to specify the Flutter root path
+
 ## Additional Information
 If things go bad, delete `flutter/bin/cache` and run `flutter doctor`. This will reset the bundled Dart SDK to the one shipped with Flutter.
 

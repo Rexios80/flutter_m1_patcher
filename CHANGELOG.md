@@ -1,3 +1,6 @@
+## 1.5.0
+- Added option to specify the Flutter root path
+
 ## 1.4.0
 - Don't execute if the script is running with Flutter's bundled Dart SDK
 - Support all Dart release channels

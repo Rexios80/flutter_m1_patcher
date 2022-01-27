@@ -1,10 +1,37 @@
 import 'dart:io';
 
+import 'package:args/args.dart';
+
+const optionFlutterPath = 'flutter-path';
+
+final parser = ArgParser()
+  ..addOption(
+    optionFlutterPath,
+    abbr: 'p',
+    help: 'Flutter root path (determined automatically if not specified)',
+    valueHelp: 'path',
+  );
+
 void main(List<String> arguments) async {
-  // Get the path to Flutter and Dart
-  final whichFlutterResult = await Process.run('which', ['flutter']);
+  final ArgResults args;
+  try {
+    args = parser.parse(arguments);
+  } catch (_) {
+    print(parser.usage);
+    exit(1);
+  }
+
+  // Get the path to Flutter
+  final String flutterPath;
+  if (args[optionFlutterPath] != null) {
+    flutterPath = args[optionFlutterPath];
+  } else {
+    final whichFlutterResult = await Process.run('which', ['flutter']);
+    flutterPath = whichFlutterResult.stdout as String;
+  }
+
+  // Get the path to Dart
   final whichDartResult = await Process.run('which', ['dart']);
-  final flutterPath = whichFlutterResult.stdout as String;
   final dartPath = whichDartResult.stdout as String;
 
   // Get Flutter's bundled Dart SDK vserion
@@ -20,7 +47,7 @@ void main(List<String> arguments) async {
       'This script is running with Flutter\'s bundled Dart SDK.'
       ' Install Dart with homebrew first.',
     );
-    exit(0);
+    exit(1);
   }
 
   stdout.write('Flutter found at $flutterPath');
@@ -36,7 +63,7 @@ void main(List<String> arguments) async {
   final confirmation = stdin.readLineSync();
   if (confirmation != 'y') {
     print('Aborting');
-    exit(0);
+    exit(1);
   }
 
   // Determine the release channel of the bundled Dart SDK
@@ -62,7 +89,7 @@ void main(List<String> arguments) async {
       'Failed to download Dart SDK.'
       ' This might mean Flutter is using a Dart SDK version that is not available on the Dart website.',
     );
-    exit(0);
+    exit(1);
   }
   await response.pipe(File('$flutterBinCachePath/dart-sdk.zip').openWrite());
 
