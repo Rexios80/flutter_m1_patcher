@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:ansicolor/ansicolor.dart';
 import 'package:args/args.dart';
+import 'package:pub_update_checker/pub_update_checker.dart';
 
 const optionFlutterPath = 'flutter-path';
 
@@ -12,12 +14,26 @@ final parser = ArgParser()
     valueHelp: 'path',
   );
 
+final magentaPen = AnsiPen()..magenta();
+final greenPen = AnsiPen()..green();
+final yellowPen = AnsiPen()..yellow();
+final redPen = AnsiPen()..red();
+
 void main(List<String> arguments) async {
+  final newVersion = await PubUpdateChecker.check();
+  if (newVersion != null) {
+    print(
+      yellowPen(
+        'There is an update available: $newVersion. Run `dart pub global activate flutter_m1_patcher` to update.',
+      ),
+    );
+  }
+
   final ArgResults args;
   try {
     args = parser.parse(arguments);
   } catch (_) {
-    print(parser.usage);
+    print(magentaPen(parser.usage));
     exit(1);
   }
 
@@ -45,8 +61,10 @@ void main(List<String> arguments) async {
   // This means the user is running the script with the bundled Dart SDK
   if (dartPath.contains(flutterBinPath)) {
     print(
-      'This script is running with Flutter\'s bundled Dart SDK.'
-      ' Install Dart with homebrew first.',
+      redPen(
+        'This script is running with Flutter\'s bundled Dart SDK.'
+        ' Install Dart with homebrew first.',
+      ),
     );
     exit(1);
   }
@@ -60,10 +78,10 @@ void main(List<String> arguments) async {
   stdout.write(dartVersionOldResult.stdout);
 
   // Ask the user for confirmation
-  stdout.write('Continue? (y/n) ');
+  stdout.write(yellowPen('Continue? (y/n) '));
   final confirmation = stdin.readLineSync();
   if (confirmation != 'y') {
-    print('Aborting');
+    print(redPen('Aborting'));
     exit(1);
   }
 
@@ -87,8 +105,10 @@ void main(List<String> arguments) async {
   final response = await request.close();
   if (response.statusCode != 200) {
     print(
-      'Failed to download Dart SDK.'
-      ' This might mean Flutter is using a Dart SDK version that is not available on the Dart website.',
+      redPen(
+        'Failed to download Dart SDK.'
+        ' This might mean Flutter is using a Dart SDK version that is not available on the Dart website.',
+      ),
     );
     exit(1);
   }
@@ -127,7 +147,7 @@ void main(List<String> arguments) async {
       await Process.run('$flutterBinPath/dart', ['--version']);
   stdout.write(dartVersionNewResult.stdout);
 
-  print('Done!');
+  print(greenPen('Done!'));
 
   exit(0);
 }

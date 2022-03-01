@@ -1,3 +1,7 @@
+## 1.6.0
+- Update checking
+- Colored output
+
 ## 1.5.0
 - Added option to specify the Flutter root path
 

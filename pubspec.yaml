@@ -1,6 +1,6 @@
 name: flutter_m1_patcher
 description: Replaces Flutter's bundled Dart SDK with the macOS arm64 version
-version: 1.5.0
+version: 1.6.0
 homepage: https://github.com/Rexios80/flutter_m1_patcher
 
 environment:
@@ -8,6 +8,8 @@ environment:
 
 dependencies:
   args: ^2.3.0
+  ansicolor: ^2.0.1
+  pub_update_checker: ^1.2.0
 
 dev_dependencies:
   rexios_lints: ^1.0.0
