@@ -1,3 +1,7 @@
+NOTE: Flutter 3.0.0 includes the arm64 dart sdk by default. This package is no longer needed unless you are using older versions of Flutter.
+
+___
+
 This script replaces Flutter's bundled Dart SDK with the macOS arm64 version
 
 ## Getting Started

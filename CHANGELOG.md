@@ -1,3 +1,6 @@
+## 1.6.1
+- Updated readme
+
 ## 1.6.0
 - Update checking
 - Colored output
