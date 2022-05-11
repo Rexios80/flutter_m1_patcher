@@ -52,8 +52,8 @@ void main(List<String> arguments) async {
   final whichDartResult = await Process.run('which', ['dart']);
   final dartPath = whichDartResult.stdout as String;
 
-  // Get Flutter's bundled Dart SDK vserion
-  final flutterBinCachePath = flutterBinPath + '/cache';
+  // Get Flutter's bundled Dart SDK version
+  final flutterBinCachePath = '$flutterBinPath/cache';
   final dartSdkVersionFile = File('$flutterBinCachePath/dart-sdk/version');
   final dartSdkVersion = dartSdkVersionFile.readAsStringSync().trim();
 
