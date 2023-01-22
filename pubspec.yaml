@@ -12,7 +12,7 @@ dependencies:
   pub_update_checker: ^1.2.0
 
 dev_dependencies:
-  rexios_lints: ^4.0.0
+  rexios_lints: ^5.0.0
 
 executables:
   flutterpatch: flutter_m1_patcher
